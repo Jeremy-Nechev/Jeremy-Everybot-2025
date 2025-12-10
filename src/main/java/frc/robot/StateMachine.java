@@ -31,13 +31,13 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import edu.wpi.first.units.measure.Distance;
 
-import frc.robot.subsystems.YAMSIntakePivot;
-import frc.robot.subsystems.YAMSIntakePivot.intakeConstants;
+import frc.robot.subsystems.IntakePivotS;
+import frc.robot.subsystems.IntakePivotS.intakeConstants;
 
 public class StateMachine {
     // TODO: add logging/simulation for states
 
-    public final YAMSIntakePivot yIntakePivot = new YAMSIntakePivot();
+    public final IntakePivotS yIntakePivot = new IntakePivotS();
 
     public enum RobotState {
         // Todo: add all states as in button mapping doc
@@ -63,18 +63,11 @@ public class StateMachine {
     // Functions below:
     // Todo: add command that combines intakeCoral and stowCoral, update states
 
-    public Command stowCoral() {
-        return Commands.sequence(setState(RobotState.HANDOFF),
-                yIntakePivot.setAngle(intakeConstants.HANDOFF_ANGLE));
-    }
+
 
     // Commands below:
     // TODO: add handoff sequence
 
-    public Command prepL1() {
-        return Commands.sequence(setState(RobotState.L1_PRE_SCORE),
-                yIntakePivot.setAngle(intakeConstants.L1_ANGLE)
-
-        );
-    }
+   
 }
+

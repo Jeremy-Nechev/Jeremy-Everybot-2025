@@ -58,17 +58,17 @@ import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.YAMSIntakePivot;
+import frc.robot.subsystems.IntakePivotS;
 
 public class Autos {
     private final AutoFactory m_factory;
     private final RobotContainer m_container;
     protected final CommandSwerveDrivetrain m_drivebase;
-    protected final YAMSIntakePivot m_intakepiv;
+    protected final IntakePivotS m_intakepiv;
     private final StateMachine stateMachine = new StateMachine();
     private final double SCORE_WAIT = 0.875;
 
-    public Autos(CommandSwerveDrivetrain drivebase, YAMSIntakePivot intakepiv,
+    public Autos(CommandSwerveDrivetrain drivebase, IntakePivotS intakepiv,
             AutoFactory factory, RobotContainer container, StateMachine stateMachine) {
         m_drivebase = drivebase; // need
         m_intakepiv = intakepiv;
@@ -103,7 +103,7 @@ public class Autos {
                                 .andThen(waitSeconds(SCORE_WAIT))
                                 .andThen(postScoreIntake.cmd())));
 
-        firstScore.atTimeBeforeEnd(0.2).onTrue(stateMachine.prepL1());
+       // firstScore.atTimeBeforeEnd(0.2).onTrue(stateMachine.prepL1());
         // firstScore.doneFor(0.1).onTrue(null/*stateMachine.scoreL1());
         // firstScore.atTimeBeforeEnd(0.1).onTrue(stateMachine.intakeCoral());
         return routine;

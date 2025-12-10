@@ -34,8 +34,9 @@ import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import frc.robot.Autos;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ClimbPivotS;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.YAMSIntakePivot;
+import frc.robot.subsystems.IntakePivotS;
 import frc.robot.StateMachine;
 
 public class RobotContainer {
@@ -58,7 +59,9 @@ public class RobotContainer {
 
     // public final IntakePivotS intakePivot = new IntakePivotS();
 
-    public final YAMSIntakePivot yIntakePivot = new YAMSIntakePivot();
+    public final IntakePivotS yIntakePivot = new IntakePivotS();
+
+    public final ClimbPivotS climbPivot = new ClimbPivotS();
 
     private final AutoFactory autoFactory;
     private Mechanism2d VISUALIZER;
@@ -106,7 +109,7 @@ public class RobotContainer {
          */
         drivetrain.registerTelemetry(logger::telemeterize);
         // Assigns button b on a zbox controller to the command "goToAngle".
-        joystick.b().onTrue(yIntakePivot.goToAngle());
+
 
     }
 
