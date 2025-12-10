@@ -49,7 +49,6 @@ public class ClimbPivotS extends SubsystemBase {
     public static final Distance OFFSET_Y = Inches.of(0);
     public static final Distance OFFSET_Z = Inches.of(2);
 
-
     public static final Angle CW_LIMIT = Degrees.of(80);
     public static final Angle CCW_LIMIT = Degrees.of(10);
 
@@ -101,7 +100,8 @@ public class ClimbPivotS extends SubsystemBase {
   private SmartMotorController climbSMC = new TalonFXWrapper(climbPivotMotor, DCMotor.getKrakenX60(1), smcConfig);
 
   private final MechanismPositionConfig robotToMechanism = new MechanismPositionConfig()
-      .withRelativePosition(new Translation3d(climbConstants.OFFSET_X, climbConstants.OFFSET_Y, climbConstants.OFFSET_Z));
+      .withRelativePosition(
+          new Translation3d(climbConstants.OFFSET_X, climbConstants.OFFSET_Y, climbConstants.OFFSET_Z));
 
   private ArmConfig climbCfg = new ArmConfig(climbSMC)
       // Soft limit is applied to the SmartMotorControllers PID

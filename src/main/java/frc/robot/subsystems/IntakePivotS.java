@@ -49,7 +49,6 @@ public class IntakePivotS extends SubsystemBase {
     public static final Distance OFFSET_Y = Inches.of(0);
     public static final Distance OFFSET_Z = Inches.of(4);
 
-
     public static final Angle CW_LIMIT = Degrees.of(-10);
     public static final Angle CCW_LIMIT = Degrees.of(95);
 
@@ -102,7 +101,8 @@ public class IntakePivotS extends SubsystemBase {
   private SmartMotorController IntakeSMC = new TalonFXWrapper(intakePivotMotor, DCMotor.getKrakenX60(1), smcConfig);
 
   private final MechanismPositionConfig robotToMechanism = new MechanismPositionConfig()
-      .withRelativePosition(new Translation3d(intakeConstants.OFFSET_X, intakeConstants.OFFSET_Y, intakeConstants.OFFSET_Z));
+      .withRelativePosition(
+          new Translation3d(intakeConstants.OFFSET_X, intakeConstants.OFFSET_Y, intakeConstants.OFFSET_Z));
 
   private ArmConfig armCfg = new ArmConfig(IntakeSMC)
       // Soft limit is applied to the SmartMotorControllers PID

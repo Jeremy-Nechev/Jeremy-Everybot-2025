@@ -37,6 +37,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ClimbPivotS;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakePivotS;
+import frc.robot.subsystems.RollersS;
 import frc.robot.StateMachine;
 
 public class RobotContainer {
@@ -62,6 +63,8 @@ public class RobotContainer {
     public final IntakePivotS yIntakePivot = new IntakePivotS();
 
     public final ClimbPivotS climbPivot = new ClimbPivotS();
+
+    public final RollersS rollers = new RollersS();
 
     private final AutoFactory autoFactory;
     private Mechanism2d VISUALIZER;
@@ -109,7 +112,6 @@ public class RobotContainer {
          */
         drivetrain.registerTelemetry(logger::telemeterize);
         // Assigns button b on a zbox controller to the command "goToAngle".
-
 
     }
 
