@@ -19,7 +19,7 @@ public class StateMachine {
     private final IntakePivotS intakePivot;
     private final RollersS rollers;
     private final CommandSwerveDrivetrain drivetrain;
-    private Autos autos;
+    private final Autos autos;
 
     public enum RobotState {
         // Todo: add all states as in button mapping doc
@@ -31,17 +31,13 @@ public class StateMachine {
     public RobotState currentState = RobotState.DEFAULT;
 
     // Constructor that accepts dependencies
-    public StateMachine(IntakePivotS intakePivot, RollersS rollers, CommandSwerveDrivetrain drivetrain) {
+    public StateMachine(IntakePivotS intakePivot, RollersS rollers, CommandSwerveDrivetrain drivetrain, Autos autos) {
         this.intakePivot = intakePivot;
         this.rollers = rollers;
         this.drivetrain = drivetrain;
-        this.autos = null; // Will be set later
+        this.autos = autos; // Will be set later
     }
 
-    // Setter for autos (to be called after RobotContainer creates it)
-    public void setAutos(Autos autos) {
-        this.autos = autos;
-    }
 
     public Command setState(RobotState newState) {
         return new InstantCommand(() -> currentState = newState);
