@@ -38,7 +38,6 @@ import frc.robot.subsystems.ClimbPivotS;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakePivotS;
 import frc.robot.subsystems.RollersS;
-import frc.robot.StateMachine;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -70,7 +69,6 @@ public class RobotContainer {
     private Mechanism2d VISUALIZER;
     private final Autos autoRoutines;
     public final AutoChooser m_chooser = new AutoChooser();
-    private final StateMachine stateMachine = new StateMachine(yIntakePivot, rollers, drivetrain, null);
 
     public RobotContainer() {
 
@@ -81,7 +79,7 @@ public class RobotContainer {
         SmartDashboard.putData("Visualzer", VISUALIZER);
 
         autoFactory = drivetrain.createAutoFactory();
-        autoRoutines = new Autos(drivetrain, yIntakePivot, autoFactory, this, stateMachine);
+        autoRoutines = new Autos(drivetrain, yIntakePivot, rollers, autoFactory, this);
         SmartDashboard.putData("Auto Mode", m_chooser);
 
     }
@@ -106,10 +104,11 @@ public class RobotContainer {
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
-        /*
-         * joystick.a().onTrue(
-         * stateMachine.intakeCoral());
-         */
+
+       joystick.b().onTrue(autoRoutines.ScoreAlgae());
+        //joystick.a().onTrue(autoRoutines.AlgaeIntake());
+       // joystick.y().onTrue(autoRoutines.AlgaeStow());
+ 
         drivetrain.registerTelemetry(logger::telemeterize);
         // Assigns button b on a zbox controller to the command "goToAngle".
 

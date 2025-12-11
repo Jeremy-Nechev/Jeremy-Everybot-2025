@@ -38,7 +38,6 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import frc.robot.StateMachine;
 import frc.robot.generated.TunerConstants;
 import yams.mechanisms.SmartMechanism;
 import yams.motorcontrollers.remote.TalonFXWrapper;

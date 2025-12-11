@@ -15,23 +15,26 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakePivotS;
+import frc.robot.subsystems.IntakePivotS.intakeConstants;
+import frc.robot.subsystems.RollersS;
+import frc.robot.subsystems.RollersS.rollerConstants;
 
 public class Autos {
     private final AutoFactory m_factory;
     protected final CommandSwerveDrivetrain m_drivebase;
     protected final IntakePivotS m_intakepiv;
-    private final StateMachine m_stateMachine;
+    protected final RollersS m_rollers;
     private final double SCORE_WAIT = 0.875;
 
-    public Autos(CommandSwerveDrivetrain drivebase, IntakePivotS intakepiv,
-            AutoFactory factory, RobotContainer container, StateMachine stateMachine) {
+    public Autos(CommandSwerveDrivetrain drivebase, IntakePivotS intakepiv, RollersS rollers,
+            AutoFactory factory, RobotContainer container) {
         m_drivebase = drivebase;
         m_intakepiv = intakepiv;
+        m_rollers = rollers;
         m_factory = factory;
-        m_stateMachine = stateMachine;
 
         container.m_chooser.addRoutine(simpleAutoName, this::simpleAuto);
         container.m_chooser.addRoutine(backsideL1Name, this::backsideL1);
@@ -67,7 +70,7 @@ public class Autos {
                                 .andThen(postScoreIntake.cmd())));
 
         // Use the StateMachine passed in via constructor
-        firstScore.doneFor(0).onTrue(m_stateMachine.AlgaeIntake());
+      // .. firstScore.doneFor(0).onTrue(m_stateMachine.AlgaeIntake());
         
         return routine;
     }
@@ -93,4 +96,81 @@ public class Autos {
     public Command createAutoAlignCommand(Pose2d targetPose, Rotation2d entryAngle) {
         return new AutoAlign(new APTarget(targetPose).withEntryAngle(entryAngle), m_drivebase);
     }
+
+
+ public enum RobotState {
+        // Todo: add all states as in button mapping doc
+        CORAL_PRE_SCORE,
+        ALGAE_PRE_SCORE,
+        DEFAULT
+    }
+
+    public RobotState currentState = RobotState.DEFAULT;
+
+    // Constructor that accepts dependencies
+
+
+    public Command setState(RobotState newState) {
+        return new InstantCommand(() -> currentState = newState);
+    }
+
+    // Commands below:
+    public Command Score() {
+        if (currentState == RobotState.CORAL_PRE_SCORE) {
+            return L1Score();
+        }
+        if (currentState == RobotState.ALGAE_PRE_SCORE) {
+            return ScoreAlgae();
+        } else {
+            return Commands.none();
+            // Do nothing
+        }
+    }
+
+    public Command AlgaeIntake() {
+        return Commands.parallel(m_intakepiv.setAngle(intakeConstants.ALGAE_INTAKE),
+                m_rollers.setVoltage(rollerConstants.INTAKE_VOLTAGE));
+    }
+
+    public Command AlgaeStow() {
+        return Commands.parallel(m_intakepiv.setAngle(intakeConstants.STOW),
+                m_rollers.setVoltage(rollerConstants.INTAKE_VOLTAGE),
+                setState(RobotState.ALGAE_PRE_SCORE));
+    }
+
+    public Command AutoallignCoral() {
+
+        
+        return Commands.sequence(
+                createAutoAlignCommand(new Pose2d(ChoreoVariables.getPose("Lolipop1").getX(),
+                        ChoreoVariables.getPose("Lolipop1").getY(), ChoreoVariables.getPose("Lolipop1").getRotation())),
+                setState(RobotState.CORAL_PRE_SCORE));
+    }
+
+    public Command AutoallignProcessor() {
+        
+        return Commands.sequence(
+                createAutoAlignCommand(new Pose2d(ChoreoVariables.getPose("Processor").getX(),
+                        ChoreoVariables.getPose("Processor").getY(),
+                        ChoreoVariables.getPose("Processor").getRotation())),
+                setState(RobotState.ALGAE_PRE_SCORE));
+    }
+
+    // Functions below:
+    public Command ScoreAlgae() {
+        return Commands.parallel(m_intakepiv.setAngle(intakeConstants.ALGAE_INTAKE),
+                m_rollers.setVoltage(rollerConstants.OUTTAKE_VOLTAGE)).withTimeout(0.3)
+                .andThen(m_intakepiv.setAngle(intakeConstants.ALGAE_POST_SCORE)
+                        .withTimeout(0.5)
+                        .andThen(m_intakepiv.setAngle(intakeConstants.STOW))
+                        .andThen(setState(RobotState.DEFAULT)));
+                
+    }
+
+    public Command L1Score() {
+        return Commands.parallel(m_intakepiv.setAngle(intakeConstants.STOW),
+                m_rollers.setVoltage(rollerConstants.OUTTAKE_VOLTAGE));
+    }
+
+
 }
