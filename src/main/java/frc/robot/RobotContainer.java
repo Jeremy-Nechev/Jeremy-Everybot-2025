@@ -71,17 +71,16 @@ public class RobotContainer {
     public final AutoChooser m_chooser = new AutoChooser();
 
     public RobotContainer() {
-
         drivetrain.resetOdometry(new Pose2d());
         VISUALIZER = logger.MECH_VISUALIZER;
-
-        configureBindings();
+    
         SmartDashboard.putData("Visualzer", VISUALIZER);
-
+    
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new Autos(drivetrain, yIntakePivot, rollers, autoFactory, this);
         SmartDashboard.putData("Auto Mode", m_chooser);
-
+    
+        configureBindings();  // ← Move this to the end
     }
 
     public double xButtonPressedTime = 0;
