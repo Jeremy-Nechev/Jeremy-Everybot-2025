@@ -111,9 +111,9 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
         
         // Example button bindings - update these based on your needs
-        // joystick.a().onTrue(stateMachine.AlgaeIntake());
-        // joystick.b().onTrue(stateMachine.ScoreAlgae());
-        // joystick.x().onTrue(stateMachine.AutoallignCoral());
+         joystick.a().whileTrue(stateMachine.AlgaeStow());
+         joystick.b().whileTrue(stateMachine.AutoallignProcessor());
+         joystick.x().whileTrue(stateMachine.AutoallignCoral());
 
     }
 

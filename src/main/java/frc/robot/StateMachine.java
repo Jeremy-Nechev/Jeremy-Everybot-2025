@@ -96,7 +96,7 @@ public class StateMachine {
 
     // Functions below:
     public Command ScoreAlgae() {
-        return Commands.parallel(intakePivot.setAngle(intakeConstants.STOW),
+        return Commands.parallel(intakePivot.setAngle(intakeConstants.ALGAE_INTAKE),
                 rollers.setVoltage(rollerConstants.OUTTAKE_VOLTAGE)).withTimeout(0.3)
                 .andThen(intakePivot.setAngle(intakeConstants.ALGAE_POST_SCORE)
                         .withTimeout(0.5)
