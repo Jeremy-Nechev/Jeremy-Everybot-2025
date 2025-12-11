@@ -58,30 +58,31 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    // public final IntakePivotS intakePivot = new IntakePivotS();
-
-    public final IntakePivotS yIntakePivot = new IntakePivotS();
-
+    public final IntakePivotS intakePivot = new IntakePivotS();
     public final ClimbPivotS climbPivot = new ClimbPivotS();
-
     public final RollersS rollers = new RollersS();
 
     private final AutoFactory autoFactory;
     private Mechanism2d VISUALIZER;
     private final Autos autoRoutines;
     public final AutoChooser m_chooser = new AutoChooser();
-    private final StateMachine stateMachine = new StateMachine();
+    private final StateMachine stateMachine;
 
     public RobotContainer() {
-
         drivetrain.resetOdometry(new Pose2d());
         VISUALIZER = logger.MECH_VISUALIZER;
 
+        // Initialize StateMachine with dependencies before autoRoutines
+        stateMachine = new StateMachine(intakePivot, rollers, null); // We'll pass autoRoutines after it's created
+        
         configureBindings();
         SmartDashboard.putData("Visualzer", VISUALIZER);
 
         autoFactory = drivetrain.createAutoFactory();
-        autoRoutines = new Autos(drivetrain, yIntakePivot, autoFactory, this, stateMachine);
+        autoRoutines = new Autos(drivetrain, intakePivot, autoFactory, this, stateMachine);
+        
+        // Now that autoRoutines is created, we can update StateMachine with it if needed
+        // (You'll need to modify StateMachine constructor or add a setter)
         SmartDashboard.putData("Auto Mode", m_chooser);
 
     }
@@ -106,17 +107,27 @@ public class RobotContainer {
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
-        /*
-         * joystick.a().onTrue(
-         * stateMachine.intakeCoral());
-         */
+        
         drivetrain.registerTelemetry(logger::telemeterize);
-        // Assigns button b on a zbox controller to the command "goToAngle".
+        
+        // Example button bindings - update these based on your needs
+        // joystick.a().onTrue(stateMachine.AlgaeIntake());
+        // joystick.b().onTrue(stateMachine.ScoreAlgae());
+        // joystick.x().onTrue(stateMachine.AutoallignCoral());
 
     }
 
     public Command getAutonomousCommand() {
         return m_chooser.selectedCommand();
-
+    }
+    
+    // Getter for StateMachine if needed elsewhere
+    public StateMachine getStateMachine() {
+        return stateMachine;
+    }
+    
+    // Getter for AutoRoutines if needed elsewhere
+    public Autos getAutoRoutines() {
+        return autoRoutines;
     }
 }
