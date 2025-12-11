@@ -19,8 +19,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutoAlign extends Command {
         private static final APConstraints kConstraints = new APConstraints()
-                .withAcceleration(5.0)
-                .withJerk(2.0); // Replace with constants later
+                .withAcceleration(15.0)
+                .withJerk(8.0); // Replace with constants later
         private static final APProfile kProfile = new APProfile(kConstraints)
                 .withErrorXY(Centimeters.of(2))
                 .withErrorTheta(Degrees.of(0.5))
@@ -32,7 +32,7 @@ public class AutoAlign extends Command {
         private final SwerveRequest.FieldCentricFacingAngle m_request = new SwerveRequest.FieldCentricFacingAngle()
                         .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
                         .withDriveRequestType(DriveRequestType.Velocity)
-                        .withHeadingPID(4, 0, 0); // Replace with constants later
+                        .withHeadingPID(5, 0, 0); // Replace with constants later
 
         private SwerveDriveState swerveState = new SwerveDriveState();
 
