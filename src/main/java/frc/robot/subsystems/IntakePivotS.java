@@ -55,6 +55,7 @@ public class IntakePivotS extends SubsystemBase {
     public static final Angle ALGAE_INTAKE = Degrees.of(45);
     public static final Angle STOW = Degrees.of(95);
     public static final Angle L1_POST_SCORE = Degrees.of(80);
+    public static final Angle ALGAE_POST_SCORE = Degrees.of(70);
 
     public static final double KP = 18;
     public static final double KI = 0;

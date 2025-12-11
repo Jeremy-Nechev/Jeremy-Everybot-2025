@@ -33,41 +33,91 @@ import edu.wpi.first.units.measure.Distance;
 
 import frc.robot.subsystems.IntakePivotS;
 import frc.robot.subsystems.IntakePivotS.intakeConstants;
+import frc.robot.subsystems.RollersS;
+import frc.robot.subsystems.RollersS.rollerConstants;
 
 public class StateMachine {
     // TODO: add logging/simulation for states
 
     public final IntakePivotS yIntakePivot = new IntakePivotS();
+    public final RollersS rollers = new RollersS();
+    public final Autos Autos = new Autos(null, yIntakePivot, null, null, null);
 
     public enum RobotState {
         // Todo: add all states as in button mapping doc
-        CORAL_INTAKING,
-        HANDOFF,
-        L1_PRE_SCORE,
-        L2_PRE_SCORE,
-        L3_PRE_SCORE,
-        L4_PRE_SCORE,
-        INTAKING_ALGAE_GROUND,
-        INTAKING_ALGAE_REEF,
-        ALGAE_STOW,
-        BARGE_PREP
+        CORAL_PRE_SCORE,
+        ALGAE_PRE_SCORE,
+        DEFAULT
 
     }
 
-    public RobotState currentState = RobotState.HANDOFF;
+    public RobotState currentState = RobotState.DEFAULT;
 
     public Command setState(RobotState newState) {
         return new InstantCommand(() -> currentState = newState);
     }
 
-    // Functions below:
-    // Todo: add command that combines intakeCoral and stowCoral, update states
-
-
-
+    
     // Commands below:
-    // TODO: add handoff sequence
+    public Command Score() {
+        if (currentState == RobotState.CORAL_PRE_SCORE) {
+            return L1Score();
+        }
+        if (currentState == RobotState.ALGAE_PRE_SCORE) {
+            return ScoreAlgae();
+        } else {
+            return Commands.none();
+            // Do nothing
+        }
+    }
 
-   
+    public Command AlgaeIntake() {
+        return Commands.parallel(yIntakePivot.setAngle(intakeConstants.ALGAE_INTAKE),
+                rollers.setVoltage(rollerConstants.INTAKE_VOLTAGE));
+    }
+
+    public Command AlgaeStow() {
+        return Commands.parallel(yIntakePivot.setAngle(intakeConstants.STOW),
+                rollers.setVoltage(rollerConstants.INTAKE_VOLTAGE),
+                setState(RobotState.ALGAE_PRE_SCORE));
+    }
+
+    public Command AutoallignCoral() {
+        return Commands.sequence(
+                Autos.createAutoAlignCommand(new Pose2d(ChoreoVariables.getPose("Lolipop1").getX(),
+                        ChoreoVariables.getPose("Lolipop1").getY(), ChoreoVariables.getPose("Lolipop1").getRotation())),
+                setState(RobotState.CORAL_PRE_SCORE));
+
+    }
+
+    public Command AutoallignProcessor() {
+        return Commands.sequence(
+                Autos.createAutoAlignCommand(new Pose2d(ChoreoVariables.getPose("Processor").getX(),
+                        ChoreoVariables.getPose("Processor").getY(),
+                        ChoreoVariables.getPose("Processor").getRotation())),
+                setState(RobotState.ALGAE_PRE_SCORE));
+
+    }
+
+
+    // Functions below:
+
+    public Command ScoreAlgae() {
+        return Commands.parallel(yIntakePivot.setAngle(intakeConstants.STOW),
+                rollers.setVoltage(rollerConstants.OUTTAKE_VOLTAGE)).withTimeout(0.3)
+                .andThen(yIntakePivot.setAngle(intakeConstants.ALGAE_POST_SCORE)
+                        .withTimeout(0.5)
+                        .andThen(yIntakePivot.setAngle(intakeConstants.STOW))
+                        .andThen(setState(RobotState.DEFAULT)));
+    }
+
+    public Command L1Score() {
+        return Commands.parallel(yIntakePivot.setAngle(intakeConstants.STOW),
+                rollers.setVoltage(rollerConstants.OUTTAKE_VOLTAGE));
+
+    }
+
 }
 
+// Commands below:
+// TODO: add handoff sequence

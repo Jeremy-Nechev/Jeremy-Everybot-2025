@@ -103,7 +103,7 @@ public class Autos {
                                 .andThen(waitSeconds(SCORE_WAIT))
                                 .andThen(postScoreIntake.cmd())));
 
-       // firstScore.atTimeBeforeEnd(0.2).onTrue(stateMachine.prepL1());
+       firstScore.atTimeBeforeEnd(0.2).onTrue(stateMachine.ScoreAlgae());
         // firstScore.doneFor(0.1).onTrue(null/*stateMachine.scoreL1());
         // firstScore.atTimeBeforeEnd(0.1).onTrue(stateMachine.intakeCoral());
         return routine;
