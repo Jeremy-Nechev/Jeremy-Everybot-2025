@@ -73,14 +73,14 @@ public class RobotContainer {
     public RobotContainer() {
         drivetrain.resetOdometry(new Pose2d());
         VISUALIZER = logger.MECH_VISUALIZER;
-    
+
         SmartDashboard.putData("Visualzer", VISUALIZER);
-    
+
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new Autos(drivetrain, yIntakePivot, rollers, autoFactory, this);
         SmartDashboard.putData("Auto Mode", m_chooser);
-    
-        configureBindings();  // ← Move this to the end
+
+        configureBindings(); // ← Move this to the end
     }
 
     public double xButtonPressedTime = 0;
@@ -93,8 +93,8 @@ public class RobotContainer {
                 drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
                                                                                                    // negative Y
                                                                                                    // (forward)
-                        .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with
+                        .withVelocityY(joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
                 ));
 
@@ -104,10 +104,14 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-       joystick.b().onTrue(autoRoutines.ScoreAlgae());
-        //joystick.a().onTrue(autoRoutines.AlgaeIntake());
-       // joystick.y().onTrue(autoRoutines.AlgaeStow());
- 
+        joystick.a().whileTrue(autoRoutines.CoralIntake());
+        joystick.b().onTrue(autoRoutines.AlgaeIntake());
+        joystick.y().onTrue(autoRoutines.AutoallignProcessor());
+        joystick.leftBumper().whileTrue(autoRoutines.CoralPreScore());
+        joystick.leftTrigger().whileTrue(autoRoutines.L1Score());
+        joystick.rightBumper().whileTrue(autoRoutines.ScoreAlgae());
+        joystick.x().whileTrue(autoRoutines.AlgaeStow());
+
         drivetrain.registerTelemetry(logger::telemeterize);
         // Assigns button b on a zbox controller to the command "goToAngle".
 

@@ -42,27 +42,29 @@ public class Autos {
 
     // Example auto
     String simpleAutoName = "Simple Auto";
+
     public AutoRoutine simpleAuto() {
         final AutoRoutine routine = m_factory.newRoutine(simpleAutoName);
         final AutoTrajectory traj = routine.trajectory("1");
-        
+
         routine.active().onTrue(
                 traj.resetOdometry()
                         .andThen(traj.cmd())
                         .andThen(createAutoAlignCommand(new Pose2d(
-                                ChoreoVariables.getPose("Lolipop1").getX(), 
-                                ChoreoVariables.getPose("Lolipop1").getY(), 
+                                ChoreoVariables.getPose("Lolipop1").getX(),
+                                ChoreoVariables.getPose("Lolipop1").getY(),
                                 ChoreoVariables.getPose("Lolipop1").getRotation()))));
         return routine;
     }
 
     // Example auto
     String backsideL1Name = "Backside L1";
+
     public AutoRoutine backsideL1() {
         final AutoRoutine routine = m_factory.newRoutine(backsideL1Name);
         var firstScore = routine.trajectory("BacksideL1(1)");
         var postScoreIntake = routine.trajectory("BacksideL1(2)");
-        
+
         routine.active().onTrue(
                 firstScore.resetOdometry()
                         .andThen(firstScore.cmd()
@@ -70,13 +72,14 @@ public class Autos {
                                 .andThen(postScoreIntake.cmd())));
 
         // Use the StateMachine passed in via constructor
-      // .. firstScore.doneFor(0).onTrue(m_stateMachine.AlgaeIntake());
-        
+        // .. firstScore.doneFor(0).onTrue(m_stateMachine.AlgaeIntake());
+
         return routine;
     }
 
     /**
-     * Creates a new Command using the Autopilot AutoAlign to navigate to the targetPose. 
+     * Creates a new Command using the Autopilot AutoAlign to navigate to the
+     * targetPose.
      * 
      * @param targetPose The desired ending Pose2d
      * @return The Command to navigate to the given Pose2d.
@@ -86,7 +89,8 @@ public class Autos {
     }
 
     /**
-     * Creates a new Command using the Autopilot AutoAlign to navigate to the targetPose. Takes a desired entry angle
+     * Creates a new Command using the Autopilot AutoAlign to navigate to the
+     * targetPose. Takes a desired entry angle
      * when approaching the targetPose.
      * 
      * @param targetPose The desired ending Pose2d
@@ -97,33 +101,30 @@ public class Autos {
         return new AutoAlign(new APTarget(targetPose).withEntryAngle(entryAngle), m_drivebase);
     }
 
-
- public enum RobotState {
+    public enum RobotState {
         // Todo: add all states as in button mapping doc
         CORAL_PRE_SCORE,
         ALGAE_PRE_SCORE,
         DEFAULT
     }
 
-    public RobotState currentState = RobotState.DEFAULT;
+    public RobotState currentState = RobotState.CORAL_PRE_SCORE;
 
     // Constructor that accepts dependencies
 
-
     public Command setState(RobotState newState) {
-        return new InstantCommand(() -> currentState = newState);
+        return Commands.runOnce(() -> {
+            currentState = newState;
+            System.out.println("State changed to: " + newState);
+        });
     }
 
     // Commands below:
     public Command Score() {
         if (currentState == RobotState.CORAL_PRE_SCORE) {
             return L1Score();
-        }
-        if (currentState == RobotState.ALGAE_PRE_SCORE) {
-            return ScoreAlgae();
         } else {
-            return Commands.none();
-            // Do nothing
+            return ScoreAlgae();
         }
     }
 
@@ -138,21 +139,25 @@ public class Autos {
                 setState(RobotState.ALGAE_PRE_SCORE));
     }
 
-    public Command AutoallignCoral() {
+    public Command CoralIntake() {
+        return createAutoAlignCommand(new Pose2d(ChoreoVariables.getPose("StationIntake").getX(),
+                ChoreoVariables.getPose("StationIntake").getY(),
+                ChoreoVariables.getPose("StationIntake").getRotation()));
+    }
 
-        
-        return Commands.sequence(
-                createAutoAlignCommand(new Pose2d(ChoreoVariables.getPose("Lolipop1").getX(),
-                        ChoreoVariables.getPose("Lolipop1").getY(), ChoreoVariables.getPose("Lolipop1").getRotation())),
+    public Command CoralPreScore() {
+        return Commands.parallel(
+                createAutoAlignCommand(new Pose2d(ChoreoVariables.getPose("L1Score").getX(),
+                        ChoreoVariables.getPose("L1Score").getY(),
+                        ChoreoVariables.getPose("L1Score").getRotation())),
                 setState(RobotState.CORAL_PRE_SCORE));
     }
 
     public Command AutoallignProcessor() {
-        
         return Commands.sequence(
-                createAutoAlignCommand(new Pose2d(ChoreoVariables.getPose("Processor").getX(),
-                        ChoreoVariables.getPose("Processor").getY(),
-                        ChoreoVariables.getPose("Processor").getRotation())),
+                createAutoAlignCommand(new Pose2d(ChoreoVariables.getPose("Processor1").getX(),
+                        ChoreoVariables.getPose("Processor1").getY(),
+                        ChoreoVariables.getPose("Processor1").getRotation())),
                 setState(RobotState.ALGAE_PRE_SCORE));
     }
 
@@ -164,13 +169,12 @@ public class Autos {
                         .withTimeout(0.5)
                         .andThen(m_intakepiv.setAngle(intakeConstants.STOW))
                         .andThen(setState(RobotState.DEFAULT)));
-                
+
     }
 
     public Command L1Score() {
         return Commands.parallel(m_intakepiv.setAngle(intakeConstants.STOW),
                 m_rollers.setVoltage(rollerConstants.OUTTAKE_VOLTAGE));
     }
-
 
 }
