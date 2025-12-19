@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.mechanisms.SmartMechanism;
 import yams.mechanisms.config.MechanismPositionConfig;
-import yams.mechanisms.config.ShooterConfig;
-import yams.mechanisms.velocity.Shooter;
+import yams.mechanisms.config.FlyWheelConfig;
+import yams.mechanisms.velocity.FlyWheel;
 import yams.motorcontrollers.SmartMotorController;
 import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
@@ -78,14 +78,14 @@ public class RollersS extends SubsystemBase {
 
     // config object for the rollers, using a ShooterConfig object but not
     // specifying all the values that don't matter for a basic roller
-    private ShooterConfig rollerConfig = new ShooterConfig(talonFXSmartMotorController)
+    private FlyWheelConfig rollerConfig = new FlyWheelConfig(talonFXSmartMotorController)
             .withDiameter(Inches.of(2))
             .withMass(Pounds.of(0.6))
             .withTelemetry("IntakeRollerMech", TelemetryVerbosity.HIGH);
 
     // using a Shooter object for our roller, since the mechanisms function
     // similarly
-    private Shooter roller = new Shooter(rollerConfig);
+    private FlyWheel roller = new FlyWheel(rollerConfig);
 
     public RollersS() {
         setDefaultCommand(setVoltage(Volts.of(0.0)));
