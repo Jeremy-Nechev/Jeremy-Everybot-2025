@@ -23,6 +23,7 @@ import frc.robot.subsystems.RollersS;
 import frc.robot.subsystems.RollersS.rollerConstants;
 
 public class Autos {
+
     private final AutoFactory m_factory;
     protected final CommandSwerveDrivetrain m_drivebase;
     protected final IntakePivotS m_intakepiv;
@@ -43,6 +44,8 @@ public class Autos {
     // Example auto
     String simpleAutoName = "Simple Auto";
 
+    Pose2d stationIntake = createChoreoPose("StationIntake");
+
     public AutoRoutine simpleAuto() {
         final AutoRoutine routine = m_factory.newRoutine(simpleAutoName);
         final AutoTrajectory traj = routine.trajectory("1");
@@ -50,10 +53,8 @@ public class Autos {
         routine.active().onTrue(
                 traj.resetOdometry()
                         .andThen(traj.cmd())
-                        .andThen(createAutoAlignCommand(new Pose2d(
-                                ChoreoVariables.getPose("Lolipop1").getX(),
-                                ChoreoVariables.getPose("Lolipop1").getY(),
-                                ChoreoVariables.getPose("Lolipop1").getRotation()))));
+                        .andThen(createAutoAlignCommand(stationIntake, Rotation2d.fromDegrees(150))));
+
         return routine;
     }
 
@@ -85,7 +86,7 @@ public class Autos {
      * @return The Command to navigate to the given Pose2d.
      */
     public Command createAutoAlignCommand(Pose2d targetPose) {
-        return new AutoAlign(new APTarget(targetPose), m_drivebase);
+        return new AutoAlign(new APTarget(AllianceFlipUtil.flipPose(targetPose)), m_drivebase);
     }
 
     /**
@@ -98,7 +99,25 @@ public class Autos {
      * @return The Command to navigate to the given Pose2d.
      */
     public Command createAutoAlignCommand(Pose2d targetPose, Rotation2d entryAngle) {
-        return new AutoAlign(new APTarget(targetPose).withEntryAngle(entryAngle), m_drivebase);
+        return new AutoAlign(new APTarget(AllianceFlipUtil.flipPose(targetPose))
+                .withEntryAngle(AllianceFlipUtil.flipRotation(entryAngle)), m_drivebase);
+    }
+
+
+    /**
+     * Creates a Pose2d from choreo variables
+     * 
+     * @param poseName (from Choreo)
+     * @return a new {@code Pose2d} with the specified pose's coordinates and
+     *         rotation
+     */
+    public static Pose2d createChoreoPose(String poseName) {
+        Pose2d bluePose = new Pose2d(
+                ChoreoVariables.getPose(poseName).getX(),
+                ChoreoVariables.getPose(poseName).getY(),
+                ChoreoVariables.getPose(poseName).getRotation());
+        
+        return AllianceFlipUtil.flipPose(bluePose);
     }
 
     public enum RobotState {

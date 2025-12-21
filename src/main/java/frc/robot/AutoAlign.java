@@ -19,12 +19,12 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutoAlign extends Command {
         private static final APConstraints kConstraints = new APConstraints()
-                .withAcceleration(15.0)
+                .withAcceleration(13.0)
                 .withJerk(8.0); // Replace with constants later
         private static final APProfile kProfile = new APProfile(kConstraints)
                 .withErrorXY(Centimeters.of(2))
                 .withErrorTheta(Degrees.of(0.5))
-                .withBeelineRadius(Centimeters.of(8));
+                .withBeelineRadius(Centimeters.of(150));
         private static final Autopilot kAutopilot = new Autopilot(kProfile);
 
         private final APTarget m_target;
