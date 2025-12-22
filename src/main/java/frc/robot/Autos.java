@@ -54,6 +54,7 @@ public class Autos {
                 traj.resetOdometry()
                         .andThen(traj.cmd())
                         .andThen(createAutoAlignCommand(stationIntake, Rotation2d.fromDegrees(150))));
+                        traj.doneFor(0).onTrue(Score());
 
         return routine;
     }
