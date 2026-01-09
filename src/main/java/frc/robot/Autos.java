@@ -70,7 +70,7 @@ public class Autos {
         routine.active().onTrue(
                 firstScore.resetOdometry()
                         .andThen(firstScore.cmd()
-                                .andThen(waitSeconds(SCORE_WAIT))
+                                .andThen(m_drivebase.waitAndBrake(SCORE_WAIT))
                                 .andThen(postScoreIntake.cmd())));
 
         // Use the StateMachine passed in via constructor

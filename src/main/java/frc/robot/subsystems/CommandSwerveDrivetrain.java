@@ -175,6 +175,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
+    // In CommandSwerveDrivetrain.java
+public Command waitAndBrake(double seconds) {
+    return this.applyRequest(() -> new SwerveRequest.SwerveDriveBrake())
+               .withTimeout(seconds);
+}
+
     public Rotation2d getGyroRotation() {
         return m_gyro.getRotation2d();
     }
